@@ -61,6 +61,7 @@ PR_TITLE=$(jq -r .title <<< $PR_DATA)
 echo "    $PR_TITLE"
 PR_DESCR=$(jq -r .body <<< $PR_DATA)
 PR_LOGIN=$(jq -r .head.user.login <<< $PR_DATA)
+PR_REF=$(jq -r .head.ref <<< $PR_DATA)
 echo -n "Fetching full name of author $PR_LOGIN... "
 USER_NAME=$(curl -s "https://api.github.com/users/$PR_LOGIN" | jq -r .name)
 echo "$USER_NAME"
@@ -72,8 +73,7 @@ nr_commits=$(git log --pretty=oneline HEAD..FETCH_HEAD | wc -l)
 closes="${NL}${NL}Closes ${PROJECT}#${PR_NUM}${NL}"
 
 if [[ $nr_commits == 1 ]]; then
-  git merge --squash FETCH_HEAD
-  git commit -m "Merge '$PR_TITLE' from $USER_NAME" -m "${PR_DESCR}${closes}"
+  git merge --squash -log=1000 "${PR_REF}" -m "Merge '$PR_TITLE' from $USER_NAME" -m "${PR_DESCR}${closes}"
 else
 	git merge --no-ff --log=1000 FETCH_HEAD -m "Merge '$PR_TITLE' from $USER_NAME" -m "${PR_DESCR}${closes}"
 fi
