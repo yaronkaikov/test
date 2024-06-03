@@ -73,7 +73,6 @@ closes="${NL}${NL}Closes ${PROJECT}#${PR_NUM}${NL}"
 
 if [[ $nr_commits == 1 ]]; then
   git merge --squash FETCH_HEAD
-	git commit -m "${PR_TITLE}" -m "${PR_DESCR}"
 else
 	git merge --no-ff --log=1000 FETCH_HEAD -m "Merge '$PR_TITLE' from $USER_NAME" -m "${PR_DESCR}${closes}"
 fi
