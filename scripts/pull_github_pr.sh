@@ -72,11 +72,10 @@ closes="${NL}${NL}Closes ${PROJECT}#${PR_NUM}${NL}"
 if [[ $nr_commits == 1 ]]; then
   git merge --squash --log=1000 FETCH_HEAD
   git commit --no-edit
-  git notes add -m "${closes}"
 else
 	git merge --no-ff --log=1000 FETCH_HEAD -m "Merge '$PR_TITLE' from $USER_NAME" -m "${PR_DESCR}${closes}"
 fi
-git commit --amend # for a manual double-check
+#git commit --amend # for a manual double-check
 
 # Check PR tests status
   #PR_HEAD_SHA=$(jq -r .head.sha <<< $PR_DATA)
