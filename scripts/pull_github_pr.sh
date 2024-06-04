@@ -73,7 +73,7 @@ nr_commits=$(git log --pretty=oneline HEAD..FETCH_HEAD | wc -l)
 closes="${NL}${NL}Closes ${PROJECT}#${PR_NUM}${NL}"
 
 if [[ $nr_commits == 1 ]]; then
-  git merge --squash -log=1000 "${PR_REF}" -m "Merge '$PR_TITLE' from $USER_NAME" -m "${PR_DESCR}${closes}"
+  git merge --squash --log=1000 "${PR_REF}" -m "Merge '$PR_TITLE' from $USER_NAME" -m "${PR_DESCR}${closes}"
 else
 	git merge --no-ff --log=1000 FETCH_HEAD -m "Merge '$PR_TITLE' from $USER_NAME" -m "${PR_DESCR}${closes}"
 fi
