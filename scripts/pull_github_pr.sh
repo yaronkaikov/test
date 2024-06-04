@@ -61,7 +61,6 @@ PR_TITLE=$(jq -r .title <<< $PR_DATA)
 echo "    $PR_TITLE"
 PR_DESCR=$(jq -r .body <<< $PR_DATA)
 PR_LOGIN=$(jq -r .head.user.login <<< $PR_DATA)
-PR_REF=$(jq -r .head.ref <<< $PR_DATA)
 echo -n "Fetching full name of author $PR_LOGIN... "
 USER_NAME=$(curl -s "https://api.github.com/users/$PR_LOGIN" | jq -r .name)
 echo "$USER_NAME"
@@ -69,16 +68,13 @@ echo "$USER_NAME"
 git fetch "$REMOTE" pull/$PR_NUM/head
 
 nr_commits=$(git log --pretty=oneline HEAD..FETCH_HEAD | wc -l)
-echo "${nr_commits}"
 closes="${NL}${NL}Closes ${PROJECT}#${PR_NUM}${NL}"
-echo "${closes}"
 if [[ $nr_commits == 1 ]]; then
-  git merge --squash --log=1000 FETCH_HEAD -m "Merge '$PR_TITLE' from $USER_NAME" -m "${PR_DESCR}${closes}"
-  git commit
+  git merge --squash --log=1000 FETCH_HEAD
 else
 	git merge --no-ff --log=1000 FETCH_HEAD -m "Merge '$PR_TITLE' from $USER_NAME" -m "${PR_DESCR}${closes}"
 fi
-git commit --amend # for a manual double-check
+#git commit --amend # for a manual double-check
 
 # Check PR tests status
   #PR_HEAD_SHA=$(jq -r .head.sha <<< $PR_DATA)
